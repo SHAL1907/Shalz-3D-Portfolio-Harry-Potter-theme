@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shalini Rani - 3D Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cinzel+Decorative:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #0b0c10;
+        }
+
+        #info {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            text-align: center;
+            z-index: 100;
+            color: #d7ac7c;
+            font-family: 'Cinzel Decorative', serif;
+            font-size: 1.25rem;
+            text-shadow: 1px 1px 2px #333;
+        }
+        
+        #overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(11, 12, 16, 0.85);
+            border: 2px solid #d7ac7c;
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 90%;
+            max-height: 80%;
+            overflow-y: auto;
+            box-shadow: 0 0 30px #d7ac7c55;
+            z-index: 200;
+            display: none;
+            color: #d7ac7c;
+            font-family: 'Cinzel', serif;
+            line-height: 1.6;
+        }
+
+        .overlay-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #c09d6f;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #c09d6f;
+            cursor: pointer;
+        }
+        
+        /* Styles for content inside the overlay */
+        .experience-card, .project-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-left: 2px solid #8c0000;
+            border-radius: 0.25rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            color: #e3d7bf;
+        }
+        .experience-card .title, .project-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #c09d6f;
+        }
+        .experience-card .role {
+            color: #8c0000;
+        }
+        .experience-card .info, .project-desc {
+            font-size: 0.9rem;
+            color: #a4a4a4;
+            margin-top: 0.5rem;
+        }
+        .experience-card .key-achievements ul {
+            list-style: none;
+            padding-left: 0;
+            margin-top: 0.5rem;
+        }
+        .experience-card .key-achievements ul li::before {
+            content: '⚯'; /* Wand symbol */
+            color: #55b85a;
+            margin-right: 0.5rem;
+        }
+        .tech-stack span {
+            background-color: rgba(85, 184, 90, 0.2);
+            color: #e3d7bf;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            margin-right: 0.25rem;
+            margin-bottom: 0.25rem;
+            display: inline-block;
+        }
+        a {
+            color: #8c0000;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* New styles for skill progress bars */
+        .skill-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .skill-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .skill-item .skill-name {
+            min-width: 120px;
+            color: #c09d6f;
+            font-weight: bold;
+        }
+        .skill-progress-container {
+            flex-grow: 1;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .skill-progress-fill {
+            height: 100%;
+            background-color: #8c0000;
+            transition: width 0.5s ease-in-out;
+        }
+
+        /* New styles for project grid */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .project-preview-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            border: 2px solid #2a2a2a;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+        .project-preview-card:hover {
+            transform: scale(1.05);
+            border-color: #c09d6f;
+        }
+        .project-preview-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        .project-info {
+            padding: 1rem;
+        }
+        .project-info .project-title {
+            color: #e3d7bf;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+        .project-info .tech-stack {
+            margin-bottom: 0.5rem;
+        }
+
+        /* New styles for terminal */
+        .terminal {
+            background-color: #0c0c0c;
+            border: 2px solid #55b85a;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            padding: 1.5rem;
+            color: #55b85a;
+            line-height: 1.4;
+            overflow: hidden;
+        }
+        .terminal-prompt {
+            color: #d7ac7c;
+        }
+        .terminal-prompt::before {
+            content: '>';
+            color: #8c0000;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        <p>Shalini Rani - Aspiring Software Development Engineer</p>
+        <p>Click on the enchanted artifacts to explore my world!</p>
+    </div>
+    <div id="overlay">
+        <button id="close-btn" class="close-btn">&times;</button>
+        <div id="overlay-content"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Data for each section of the portfolio
+        const portfolioData = {
+            'experience': {
+                title: 'Chronicles of My Journeys',
+                content: `
+                    <!-- Intern 1: Anudip Foundation -->
+                    <div class="experience-card">
+                        <span class="title">Anudip Foundation</span>
+                        <p class="role">Web Developer Intern</p>
+                        <p class="info">Nov 2021 - May 2025</p>
+                        <p class="description">Developed interactive web applications using React.js, building reusable components that improved code reusability and enhanced UI/UX.</p>
+                        <p class="key-achievements-title">Magical Feats:</p>
+                        <ul>
+                            <li>Developed interactive web applications using React.js, building reusable components that improved code reusability by 25%.</li>
+                            <li>Enhanced UI/UX with responsive layouts and mobile-first design, increasing page accessibility and user engagement accuracy.</li>
+                            <li>Attended professional soft skills training sessions, strengthening communication and teamwork for collaborative projects.</li>
+                        </ul>
+                        <div class="tech-stack">
+                            <span>React.js</span>
+                            <span>JavaScript</span>
+                            <span>HTML5</span>
+                            <span>CSS3</span>
+                        </div>
+                    </div>
+
+                    <!-- Intern 2: Capgemini x ICT Academy -->
+                    <div class="experience-card">
+                        <span class="title">Capgemini x ICT Academy</span>
+                        <p class="role">Software Development Intern Python Backend (SDE Role)</p>
+                        <p class="info">Feb 2025</p>
+                        <p class="description">Designed and implemented RESTful APIs using Flask and Python, ensuring high accuracy in data exchange between services.</p>
+                        <p class="key-achievements-title">Magical Feats:</p>
+                        <ul>
+                            <li>Designed and implemented RESTful APIs using Flask and Python, ensuring 98% accuracy in data exchange between services.</li>
+                            <li>Modularized services and integrated JSON-based APIs, reducing backend response time by 20% and improving maintainability.</li>
+                            <li>Participated in soft skills workshops, enhancing adaptability and communication in a corporate setting.</li>
+                        </ul>
+                        <div class="tech-stack">
+                            <span>Python</span>
+                            <span>Flask</span>
+                            <span>REST APIs</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Intern 3: IBM Skills Build x CSRBOX -->
+                    <div class="experience-card">
+                        <span class="title">IBM Skills Build x CSRBOX</span>
+                        <p class="role">Frontend Developer Intern (SDE Role)</p>
+                        <p class="info">Jun 2024 - Aug 2024</p>
+                        <p class="description">Built and deployed a responsive travel website using React.js, HTML5, and CSS3, improving cross-device accessibility.</p>
+                        <p class="key-achievements-title">Magical Feats:</p>
+                        <ul>
+                            <li>Built and deployed a responsive travel website using React.js, HTML5, and CSS3, improving cross-device accessibility by 30%.</li>
+                            <li>Optimized state management to reduce component load time, increasing rendering accuracy and delivering smoother UI interactions.</li>
+                        </ul>
+                        <div class="tech-stack">
+                            <span>React.js</span>
+                            <span>HTML5</span>
+                            <span>CSS3</span>
+                            <span>JavaScript</span>
+                        </div>
+                    </div>
+                `
+            },
+            'projects': {
+                title: 'Gryffindor’s Vault of Projects',
+                content: `
+                    <p>Click on a project to learn more.</p>
+                    <div class="project-grid">
+                        <div class="project-preview-card">
+                            <img src="https://placehold.co/400x200/5d5d5d/e3d7bf?text=Weather+App+Preview" alt="Weather App Preview">
+                            <div class="project-info">
+                                <span class="project-title">Weather App</span>
+                                <p class="project-desc">A responsive web app developed with JavaScript and the OpenWeatherMap API.</p>
+                                <div class="tech-stack">
+                                    <span>JavaScript</span>
+                                    <span>HTML5</span>
+                                    <span>CSS3</span>
+                                </div>
+                                <a href="https://github.com/SHAL1907/Weather-App" target="_blank">View Spellbook &rarr;</a>
+                            </div>
+                        </div>
+                        <div class="project-preview-card">
+                            <img src="https://placehold.co/400x200/5d5d5d/e3d7bf?text=Audit+Log+Analyzer+Preview" alt="Audit Log Analyzer Preview">
+                            <div class="project-info">
+                                <span class="project-title">Audit Log Analyzer</span>
+                                <p class="project-desc">A Python tool to automate internal audit log analysis and anomaly detection.</p>
+                                <div class="tech-stack">
+                                    <span>Python</span>
+                                    <span>Pandas</span>
+                                    <span>Matplotlib</span>
+                                </div>
+                                <a href="https://github.com/SHAL1907/Audit-Log-Analyzer" target="_blank">View Spellbook &rarr;</a>
+                            </div>
+                        </div>
+                        <div class="project-preview-card">
+                            <img src="https://placehold.co/400x200/5d5d5d/e3d7bf?text=Travel+Website+Preview" alt="Travel Website Preview">
+                            <div class="project-info">
+                                <span class="project-title">Travel Website</span>
+                                <p class="project-desc">A fully responsive travel website built with the MERN stack for a smooth user experience.</p>
+                                <div class="tech-stack">
+                                    <span>React.js</span>
+                                    <span>Node.js</span>
+                                    <span>MongoDB</span>
+                                </div>
+                                <a href="#" target="_blank">View Spellbook &rarr;</a>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            'skills': {
+                title: 'My Technical Arsenal',
+                content: `
+                    <p>Here are my skills and their magical strengths:</p>
+                    <div class="skill-list">
+                        <div class="skill-item">
+                            <span class="skill-name">JavaScript</span>
+                            <div class="skill-progress-container">
+                                <div class="skill-progress-fill" style="width: 90%;"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">Python</span>
+                            <div class="skill-progress-container">
+                                <div class="skill-progress-fill" style="width: 85%;"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">React.js</span>
+                            <div class="skill-progress-container">
+                                <div class="skill-progress-fill" style="width: 80%;"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">HTML5 / CSS3</span>
+                            <div class="skill-progress-container">
+                                <div class="skill-progress-fill" style="width: 95%;"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">MongoDB</span>
+                            <div class="skill-progress-container">
+                                <div class="skill-progress-fill" style="width: 70%;"></div>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <span class="skill-name">Git & GitHub</span>
+                            <div class="skill-progress-container">
+                                <div class="skill-progress-fill" style="width: 88%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            'about': {
+                title: 'The Great Hall of Me',
+                content: `
+                    <p>I am a passionate B.Tech student with a strong focus on competitive programming and full-stack web development.</p>
+                    <ul>
+                        <li><span style="color:#8c0000;">&gt;</span> Competitive programming and algorithmic problem solving.</li>
+                        <li><span style="color:#8c0000;">&gt;</span> Building fast, clean, and user-friendly web applications.</li>
+                        <li><span style="color:#8c0000;">&gt;</span> Continuous learning and exploring new technologies.</li>
+                    </ul>
+                `
+            },
+            'contact': {
+                title: 'Reach the Owl Post',
+                content: `
+                    <p><span style="color:#8c0000;">Email:</span> <a href="mailto:shalinir1907@gmail.com" style="color:#8c0000;text-decoration:underline;">shalinir1907@gmail.com</a></p>
+                    <p><span style="color:#8c0000;">LinkedIn:</span> <a href="https://www.linkedin.com/in/shalini-rani-05b436250?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BHoNQ4WHUSxeki1QXE30jFw%3D%3D" target="_blank" style="color:#8c0000;text-decoration:underline;">linkedin.com/in/shalini-rani-05b436250</a></p>
+                    <p><span style="color:#8c0000;">GitHub:</span> <a href="https://github.com/SHAL1907" target="_blank" style="color:#8c0000;text-decoration:underline;">github.com/SHAL1907</a></p>
+                `
+            },
+            'achievements': {
+                title: 'The Prophecies',
+                content: `
+                    <ul>
+                        <li><span style="color:#8c0000;">&gt;</span> Solved over 150 DSA problems on platforms like LeetCode and GeeksforGeeks.</li>
+                        <li><span style="color:#8c0000;">&gt;</span> Published a research paper titled "AI-Based Credit Card Fraud Detection" in IEEE-CICSN-2025.</li>
+                    </ul>
+                `
+            },
+            'funfacts': {
+                title: 'Unlocking the Chamber of Secrets',
+                content: `
+                    <div class="terminal">
+                        <div class="terminal-prompt">./whoami</div>
+                        <div class="terminal-output">B.Tech Student | Competitive Programmer | Web Developer</div>
+                        <br>
+                        <div class="terminal-prompt">ls -la achievements</div>
+                        <div class="terminal-output">
+                            <p>• Solved over 150+ DSA problems on platforms like LeetCode and GeeksforGeeks.</p>
+                            <p>• Published a research paper titled "AI-Based Credit Card Fraud Detection" in IEEE-CICSN-2025.</p>
+                        </div>
+                        <br>
+                        <div class="terminal-prompt">grep "passion" about.txt</div>
+                        <div class="terminal-output">
+                            <p>My passion lies in building scalable web applications and continuously learning new technologies. I love the thrill of solving complex algorithmic challenges.</p>
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        let scene, camera, renderer, raycaster, mouse;
+        let INTERSECTED;
+        const sections = [];
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        const rotationSpeed = 0.005;
+
+        // Magic Orb Variables
+        let magicOrb, magicOrbMaterial;
+        let time = 0;
+
+        // Initialize the scene on window load
+        window.onload = function() {
+            init();
+            animate();
+        };
+
+        function init() {
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0b0c10);
+
+            // Camera setup
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 25;
+
+            // Renderer setup
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.body.appendChild(renderer.domElement);
+
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+            directionalLight.position.set(0, 1, 1);
+            scene.add(directionalLight);
+
+            // Raycaster for mouse interaction
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
+
+            // Create 3D sections
+            const geometries = [
+                new THREE.BoxGeometry(3, 3, 3),
+                new THREE.TorusGeometry(2, 0.5, 16, 100),
+                new THREE.OctahedronGeometry(2.5),
+                new THREE.ConeGeometry(2, 4, 32),
+                new THREE.DodecahedronGeometry(2.5),
+                new THREE.IcosahedronGeometry(2.5),
+                new THREE.TorusKnotGeometry(2, 0.5, 100, 16)
+            ];
+
+            const colors = [0x740001, 0x0e1a40, 0x5d5d5d, 0xecb939, 0x3d321d, 0x946b2d, 0x48a85f];
+            const labels = ['experience', 'projects', 'skills', 'about', 'contact', 'achievements', 'funfacts'];
+            
+            for (let i = 0; i < labels.length; i++) {
+                const material = new THREE.MeshPhongMaterial({ color: colors[i % colors.length], flatShading: true });
+                const mesh = new THREE.Mesh(geometries[i], material);
+                
+                // Position objects in a circle
+                const angle = (i / labels.length) * Math.PI * 2;
+                const radius = 15;
+                mesh.position.x = radius * Math.sin(angle);
+                mesh.position.y = (Math.random() - 0.5) * 5;
+                mesh.position.z = radius * Math.cos(angle);
+                
+                mesh.userData.id = labels[i];
+                sections.push(mesh);
+                scene.add(mesh);
+            }
+
+            // Create magical orb in the center
+            const magicOrbGeometry = new THREE.IcosahedronGeometry(3.5, 1);
+            magicOrbMaterial = new THREE.MeshPhongMaterial({
+                color: 0xffd700,
+                emissive: 0xffd700,
+                emissiveIntensity: 0.5,
+                flatShading: true
+            });
+            magicOrb = new THREE.Mesh(magicOrbGeometry, magicOrbMaterial);
+            scene.add(magicOrb);
+
+            // Create starfield background
+            const starCount = 500;
+            const starGeometry = new THREE.BufferGeometry();
+            const positions = [];
+            for (let i = 0; i < starCount; i++) {
+                const x = THREE.MathUtils.randFloatSpread(200);
+                const y = THREE.MathUtils.randFloatSpread(200);
+                const z = THREE.MathUtils.randFloatSpread(200);
+                positions.push(x, y, z);
+            }
+            starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            const starMaterial = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 0.5,
+                transparent: true,
+                opacity: 0.8
+            });
+            const stars = new THREE.Points(starGeometry, starMaterial);
+            scene.add(stars);
+
+            // Event listeners for user interaction
+            window.addEventListener('resize', onWindowResize, false);
+            document.addEventListener('mousemove', onMouseMove, false);
+            document.addEventListener('mousedown', onMouseDown, false);
+            document.addEventListener('mouseup', onMouseUp, false);
+            document.addEventListener('click', onMouseClick, false);
+            document.getElementById('close-btn').addEventListener('click', closeOverlay, false);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function onMouseMove(event) {
+            event.preventDefault();
+            
+            // For hovering
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            if (isDragging) {
+                const deltaX = event.clientX - previousMousePosition.x;
+                const deltaY = event.clientY - previousMousePosition.y;
+                scene.rotation.y += deltaX * rotationSpeed;
+                scene.rotation.x += deltaY * rotationSpeed;
+                previousMousePosition = { x: event.clientX, y: event.clientY };
+            }
+        }
+
+        function onMouseDown(event) {
+            isDragging = true;
+            previousMousePosition = { x: event.clientX, y: event.clientY };
+        }
+
+        function onMouseUp() {
+            isDragging = false;
+        }
+
+        function onMouseClick(event) {
+            // For clicking
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(sections);
+            
+            if (intersects.length > 0) {
+                const sectionId = intersects[0].object.userData.id;
+                showOverlay(sectionId);
+            }
+        }
+
+        function showOverlay(id) {
+            const data = portfolioData[id];
+            const overlay = document.getElementById('overlay');
+            const overlayContent = document.getElementById('overlay-content');
+            
+            overlayContent.innerHTML = `
+                <div class="overlay-title">${data.title}</div>
+                ${data.content}
+            `;
+            overlay.style.display = 'block';
+        }
+
+        function closeOverlay() {
+            const overlay = document.getElementById('overlay');
+            overlay.style.display = 'none';
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.01;
+            
+            // Hover effect
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(sections);
+
+            if (intersects.length > 0) {
+                if (INTERSECTED != intersects[0].object) {
+                    if (INTERSECTED) {
+                        INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+                    }
+                    INTERSECTED = intersects[0].object;
+                    INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+                    INTERSECTED.material.emissive.setHex(0xaaaaaa);
+                }
+            } else {
+                if (INTERSECTED) {
+                    INTERSECTED.material.emissive.setHex(INTERSECTED.currentHex);
+                    document.body.style.cursor = 'auto'; // Change cursor back
+                }
+                INTERSECTED = null;
+            }
+
+            // Rotate objects and the central orb
+            sections.forEach(mesh => {
+                mesh.rotation.x += 0.005;
+                mesh.rotation.y += 0.005;
+            });
+            magicOrb.rotation.x += 0.005;
+            magicOrb.rotation.y += 0.01;
+
+            // Animate magic orb glow
+            magicOrbMaterial.emissiveIntensity = 0.5 + 0.5 * Math.sin(time);
+
+            renderer.render(scene, camera);
+        }
+    </script>
+</body>
+</html>
